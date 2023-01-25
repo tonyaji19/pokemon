@@ -7,7 +7,8 @@ export default function Home({ initialPokemon }) {
   const [pokemon, setPokemon] = useState(initialPokemon);
   const [offset, setOffet] = useState(0);
 
-  const [input, setInput] = useState("");
+  const [search, setSearch] = useState("");
+  console.log(search);
 
   const fetchPokemon = async (url, next) => {
     const response = await fetch(url);
@@ -16,10 +17,18 @@ export default function Home({ initialPokemon }) {
     setOffet(next ? offset + 20 : offset - 20);
     setPokemon(nextPokemon);
   };
-
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
+  const handleChange = (e) => {
+    setSearch(e.target.value);
   };
+  let dataSearch = pokemon.results.filter((item) => {
+    return Object.keys(item).some((key) =>
+      item[key]
+        .toString()
+        .toLowerCase()
+        .includes(search.toString().toLowerCase())
+    );
+  });
+
   return (
     <Layout title={"Pikachu Website"}>
       <Head>
@@ -42,13 +51,13 @@ export default function Home({ initialPokemon }) {
           type="text"
           placeholder="Search"
           className="mx-8 w-full sm:w-3/4 bg-gray-100 px-6 py-2 rounded border border-poke-yellow outline-none"
-          onChange={handleInputChange}
-          value={input}
+          onChange={handleChange}
+          value={search}
         />
       </div>
 
       <div className=" mx-14 pt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {pokemon.results.map((char, index) => (
+        {dataSearch.map((char, index) => (
           <Pokemon key={index} pokemon={char} index={index + offset} />
         ))}
       </div>
